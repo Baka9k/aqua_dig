@@ -30,19 +30,13 @@
 			}
 			
 			function drawGround0(TileNumberX, TileNumberY) {
-				var stone = new Image();             
-				stone.src = 'http://www.bakeneko.esy.es/aquadig/images/stone.png'; 
-				stone.onload = function() { 
-					context.drawImage(stone, TileNumberX*TileWidth - - x, TileNumberY*TileHeight - - y, TileWidth, TileHeight);
-				}
+				var stone = document.getElementById("stone");
+				context.drawImage(stone, TileNumberX*TileWidth - - x, TileNumberY*TileHeight - - y, TileWidth, TileHeight);
 			}
 
 			function drawQuartz(TileNumberX, TileNumberY) {
-				var quartz = new Image();             
-				quartz.src = 'http://www.bakeneko.esy.es/aquadig/images/quartz.png'; 
-				quartz.onload = function() { 
-					context.drawImage(quartz,TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
-				}
+				var quartz = document.getElementById("quartz");
+				context.drawImage(quartz, TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
 			}
 	
 			function drawRuby(TileNumberX, TileNumberY) {
@@ -62,18 +56,12 @@
 
 			function drawBoat() {
 				if (lrsw == 'l') {
-					var pic = new Image();             
-					pic.src = 'http://www.bakeneko.esy.es/aquadig/images/boat-l-1.png'; 
-					pic.onload = function() { 
-						context.drawImage(pic, (24*TileWidth/2), (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
-					}
+					var pic = document.getElementById("boat-l");             
+					context.drawImage(pic, (24*TileWidth/2), (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
 				}
 				if (lrsw == 'r') {
-					var pic = new Image();             
-					pic.src = 'http://www.bakeneko.esy.es/aquadig/images/boat-r-1.png'; 
-					pic.onload = function() { 
-						context.drawImage(pic, (24*TileWidth/2)+3, (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
-					}
+					var pic = document.getElementById("boat-r");             
+					context.drawImage(pic, (24*TileWidth/2)+3, (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
 				}
 			}
 
@@ -369,7 +357,7 @@
   <tr>
     <th width="25%" height="482" align="left" valign="top" scope="col"><form name="data"><table width="247" border="1">
   <tr>
-    <td width="71" height="42" align="center" valign="middle" bgcolor="#555555" scope="row">&nbsp;</td>
+    <td width="71" height="42" align="center" valign="middle" bgcolor="#555555" scope="row"><img src="images/stone.png" width="32" height="32" alt="Stone" id="stone" /></td>
     <td width="160" bgcolor="#555555">&nbsp;</td>
   </tr>
   <tr>
@@ -389,7 +377,7 @@
     <td bgcolor="#555555">&nbsp;</td>
   </tr>
   <tr>
-    <td height="23" align="center" valign="middle" bgcolor="#555555" scope="row">&nbsp;</td>
+    <td height="23" align="center" valign="middle" bgcolor="#555555" scope="row"><img src="images/boat-l-1.png" width="0" height="0" id="boat-l" /><img src="images/boat-r-1.png" width="0" height="0" id="boat-r" /></td>
     <td bgcolor="#555555">&nbsp;</td>
   </tr>
   <tr>
