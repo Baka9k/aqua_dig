@@ -1,94 +1,81 @@
-var TileHeight = 40;
-var TileWidth = 40;
-var TileX = 24;
-var TileY = 16;
-var lrsw = 'r';
-var div = 0;
-var keys = 'enabled';
+var ad = {};
+
+ad.canvas = document.createElement('canvas');
+document.body.appendChild(ad.canvas);
+ad.context = ad.canvas.getContext("2d");
+ad.canvas.width = window.innerWidth;
+ad.canvas.style.position = "absolute";
+ad.canvas.style.left = "0px";
+ad.canvas.style.top = "0px";
+ad.canvas.height = window.innerHeight;
+ad.width = window.innerWidth;
+ad.height = window.innerHeight;
+
+ad.tileHeight = 40;
+ad.tileWidth = 40;
+ad.tilesOnX = Math.floor(ad.width/ad.tileWidth);
+ad.tilesOnY = Math.floor(ad.height/ad.tileHeight);
+ad.lr = 'r';
+ad.o2 = 100;
+ad.keys = 'enabled';
 
 function main() {
-	div = document.getElementById('o2div');
-	div.style.width = 160+'px';
-	drawWorld(0,0,0,0);  
+	ad.drawWorld(0,0);
+	//ad.drawTools();
 }
 
-//от kx (TileNumberX) до x (TileX)
-function drawWorld(TileNumberX, TileNumberY, x, y) {
-	var canvas = document.getElementById('1');
-	var context = canvas.getContext('2d');
-	if (div.style.width == 0+'px') {
-		alert("Game over");
-		window.location.reload();
-	}
-	
-	function drawGround0(TileNumberX, TileNumberY) {
-		var stone = document.getElementById("stone");
-		context.drawImage(stone, TileNumberX*TileWidth - - x, TileNumberY*TileHeight - - y, TileWidth, TileHeight);
-	}
+ad.draw = function(id, x, y, width, height) {
+	var img = document.getElementById(id);
+	ad.context.drawImage(img, x, y, width, height);
+}
 
-	function drawQuartz(TileNumberX, TileNumberY) {
-		var quartz = document.getElementById("quartz");
-		context.drawImage(quartz, TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
+ad.drawBoat = function(x, y, width, height) {
+	if (ad.lrsw == 'l') {
+		var img = document.getElementById("boat-l");             
+		ad.context.drawImage(img, x, y, width, height);
 	}
-
-	function drawRuby(TileNumberX, TileNumberY) {
-		var img = document.getElementById("ruby");
-		context.drawImage(img, TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
+	if (lrsw == 'r') {
+		var pic = document.getElementById("boat-r");             
+		ad.context.drawImage(img, x, y, width, height);
 	}
+}
 
-	function drawEmerald(TileNumberX, TileNumberY) {
-		var img = document.getElementById("emerald");
-		context.drawImage(img, TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
+ad.drawTiles = function(x, y) {
+	//Sky and water
+	if (y > 5) {
+		ad.context.fillStyle = "#6495ED";
+		ad.context.fillRect(x * ad.tileWidth, y * ad.tileHeight, ad.tileWidth, ad.tileHeight);
+	}
+	else {
+		context.fillStyle = "#87CEFA";
+		ad.context.fillRect(x * ad.tileWidth, y * ad.tileHeight, ad.tileWidth, ad.tileHeight);
 	}
 
-	function drawDiamond(TileNumberX, TileNumberY) {
-		var img = document.getElementById("diamond");
-		context.drawImage(img, TileNumberX*TileWidth + x + 4, TileNumberY*TileHeight + y + 4, 30, 30);
-	}
-
-	function drawBoat() {
-		if (lrsw == 'l') {
-			var pic = document.getElementById("boat-l");             
-			context.drawImage(pic, (24*TileWidth/2), (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
-		}
-		if (lrsw == 'r') {
-			var pic = document.getElementById("boat-r");             
-			context.drawImage(pic, (24*TileWidth/2)+3, (16*TileHeight/2)+4, TileWidth-3, TileHeight-10);
-		}
-	}
-
-	function drawTile(TileNumberX, TileNumberY) {
-		//Sky and water
-		if (TileNumberY > 5) {
-			context.fillStyle = "#6495ED";
-			context.fillRect(TileNumberX*TileWidth - - x, TileNumberY*TileHeight - - y, TileWidth, TileHeight);
-		}
-		else if (TileNumberY <= 5) {
-			context.fillStyle = "#87CEFA";
-			context.fillRect(TileNumberX*TileWidth - - x, TileNumberY*TileHeight - - y, TileWidth, TileHeight);
-		}
-
-		//Ground	
-		var xandy = (TileNumberX+'and'+TileNumberY);
-		var ap = hash2prob(coordHash(TileNumberX, TileNumberY));
+	//Ground
+	var xandy = (x + 'and' + y);
+	var ap = ad.hash2prob(coordHash(x, y));
+	if (y == 21) {
 		var probability = 0.5;
-		if ((ap < probability) && (TileNumberY == 21) && (a.in_array(xandy)==false)) {
-			drawGround0(TileNumberX, TileNumberY);
-		}
-		if ((TileNumberY > 21) && (a.in_array(xandy)==false)) {
-			drawGround0(TileNumberX, TileNumberY);
-		}
-		var probability = 0.01;
-		if ((ap < probability) && (TileNumberY > 30) && (TileNumberY < 50) && (a.in_array(xandy)==false)) {
-			drawQuartz(TileNumberX, TileNumberY);
-		}
-		var probability0 = 0.01;
-		var probability1= 0.02;
-		if ((ap < probability1) && (ap > probability0) && (TileNumberY > 55) && (TileNumberY < 50) && (a.in_array(xandy)==false)) {
-			drawEmerald(TileNumberX, TileNumberY);   
+		if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
+			ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
 		}
 	}
+	if ((y > 21) && (ad.map.in_array(xandy) == false)) {
+		ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
+	}
+	var probability = 0.01;
+	if ((ap < probability) && (y > 30) && (y < 50) && (ad.map.in_array(xandy) == false)) {
+		ad.draw(quartz, x, y, ad.tileWidth, ad.tileHeight);
+	}
+	probability = 0.03;
+	if ((ap < probability1) && (TileNumberY > 51) && (TileNumberY < 50) && (a.in_array(xandy)==false)) {
+		drawEmerald(TileNumberX, TileNumberY);   
+	}
+}
 
+ad.drawWorld = function (fromX, fromY) {
+
+	
 	for (i = TileNumberX; i < TileX; i += 1) {
 		for (j = TileNumberY; j < TileY; j += 1) {
 			drawTile(i, j);
