@@ -20,9 +20,17 @@ function main() {
 	ad.o2 = 100;
 	ad.keys = 'enabled';
 	ad.map = new Array();
+	
+	Array.prototype.in_array = function(p_val) {
+		for(var i = 0, l = this.length; i < l; i++)	{
+			if(this[i] == p_val) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-	ad.draw = function(id, x, y, width, height) {
-		var img = document.getElementById(id);
+	ad.draw = function(img, x, y, width, height) {
 		ad.context.drawImage(img, x, y, width, height);
 	}
 
@@ -31,8 +39,9 @@ function main() {
 			var img = document.getElementById("boat-l");             
 			ad.context.drawImage(img, x, y, width, height);
 		}
-		if (lrsw == 'r') {
-			var pic = document.getElementById("boat-r");             
+		if (ad.lrsw == 'r') {
+			var img = document.getElementById("boat-r");
+			console.log(img);
 			ad.context.drawImage(img, x, y, width, height);
 		}
 	}
@@ -49,35 +58,37 @@ function main() {
 		return (hash & 0xFFFF)/65536;
 	}
 
-	ad.drawTile = function(x, y) {
+	ad.drawTile = function(tileX, tileY) {
+		var x = tileX * ad.tileWidth;
+		var y = tileY * ad.tileHeight;
 		//Sky and water
-		if (y > 5) {
+		if (tileY > 5) {
 			ad.context.fillStyle = "#6495ED";
-			ad.context.fillRect(x * ad.tileWidth, y * ad.tileHeight, ad.tileWidth, ad.tileHeight);
+			ad.context.fillRect(x, y, ad.tileWidth, ad.tileHeight);
 		}
 		else {
 			ad.context.fillStyle = "#87CEFA";
-			ad.context.fillRect(x * ad.tileWidth, y * ad.tileHeight, ad.tileWidth, ad.tileHeight);
+			ad.context.fillRect(x, y, ad.tileWidth, ad.tileHeight);
 		}
 
 		//Ground
 		var xandy = (x + 'and' + y);
 		var ap = ad.hash2prob(ad.coordHash(x, y));
-		if (y == 21) {
+		if (tileY == 21) {
 			var probability = 0.5;
 			if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
 				ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
 			}
 		}
-		if ((y > 21) && (ad.map.in_array(xandy) == false)) {
+		if ((tileY > 21) && (ad.map.in_array(xandy) == false)) {
 			ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
 		}
 		var probability = 0.01;
-		if ((ap < probability) && (y > 30) && (y < 50) && (ad.map.in_array(xandy) == false)) {
+		if ((ap < probability) && (tileY > 30) && (tileY < 50) && (ad.map.in_array(xandy) == false)) {
 			ad.draw(quartz, x, y, ad.tileWidth, ad.tileHeight);
 		}
 		probability = 0.03;
-		if ((ap < probability) && (y > 51) && (y < 50) && (a.in_array(xandy)==false)) {
+		if ((ap < probability) && (tileY > 51) && (tileY < 50) && (a.in_array(xandy)==false)) {
 			ad.draw(emerald, x, y, ad.tileWidth, ad.tileHeight);  
 		}
 	}
@@ -90,7 +101,8 @@ function main() {
 		}
 		ad.drawBoat(ad.tilesOnX/2 - ad.tileWidth, ad.tilesOnY/2 - ad.tileHeight, ad.tileWidth - 3, ad.tileHeight - 3);
 	}
-
+	
+	/*
 	function canvas_keypress(event) {
 		if (keys == "enabled") {
 			k = event.keyCode;
@@ -148,16 +160,6 @@ function main() {
 			sq++;
 			document.getElementById('quartzdiv').innerHTML= sq;
 		}
-	}
-
-
-	Array.prototype.in_array = function(p_val) {
-		for(var i = 0, l = this.length; i < l; i++)	{
-			if(this[i] == p_val) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	function CameraRight() {
@@ -271,6 +273,8 @@ function main() {
 			drawWorld(kx,ky,-x1,-y1);
 		}, 1000/N);
 	}
+	*/
+	
 	ad.drawWorld(0,0);
 	//ad.drawTools();
 
