@@ -61,8 +61,8 @@ function main() {
 	}
 
 	ad.drawTile = function(tileX, tileY) {
-		var x = tileX * ad.tileWidth + ad.displacementX;
-		var y = tileY * ad.tileHeight + ad.displacementY;
+		var x = (tileX - ad.displacementX)* ad.tileWidth;
+		var y = (tileY - ad.displacementY)* ad.tileHeight;
 		//Sky and water
 		if (tileY > 5) {
 			ad.context.fillStyle = "#6495ED";
@@ -75,7 +75,7 @@ function main() {
 
 		//Ground
 		var xandy = (tileX + 'and' + tileY);
-		var ap = ad.hash2prob(ad.coordHash(x, y));
+		var ap = ad.hash2prob(ad.coordHash(tileX, tileY));
 		if (tileY == 2) { //212212121212122121212121212121221212
 			var probability = 0.5;
 			if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
@@ -102,6 +102,7 @@ function main() {
 			}
 		}
 		ad.drawBoat((ad.tilesOnX / 2 * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight - 11);
+		console.log(fromX,fromX + ad.tilesOnX);
 	}
 	
 	ad.keypress = function(event) {
