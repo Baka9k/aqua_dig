@@ -35,13 +35,12 @@ function main() {
 	}
 
 	ad.drawBoat = function(x, y, width, height) {
-		if (ad.lrsw == 'l') {
+		if (ad.lr == 'l') {
 			var img = document.getElementById("boat-l");             
 			ad.context.drawImage(img, x, y, width, height);
 		}
-		if (ad.lrsw == 'r') {
+		if (ad.lr == 'r') {
 			var img = document.getElementById("boat-r");
-			console.log(img);
 			ad.context.drawImage(img, x, y, width, height);
 		}
 	}
@@ -99,7 +98,7 @@ function main() {
 				ad.drawTile(i, j);
 			}
 		}
-		ad.drawBoat(ad.tilesOnX/2 - ad.tileWidth, ad.tilesOnY/2 - ad.tileHeight, ad.tileWidth - 3, ad.tileHeight - 3);
+		ad.drawBoat((ad.tilesOnX / 2 * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight - 11);
 	}
 	
 	/*
