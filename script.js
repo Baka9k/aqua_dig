@@ -14,12 +14,15 @@ function main() {
 
 	ad.tileHeight = 40;
 	ad.tileWidth = 40;
-	ad.tilesOnX = Math.floor(ad.width/ad.tileWidth);
-	ad.tilesOnY = Math.floor(ad.height/ad.tileHeight);
+	ad.tilesOnX = Math.ceil(ad.width/ad.tileWidth);
+	ad.tilesOnY = Math.ceil(ad.height/ad.tileHeight);
 	ad.lr = 'r';
 	ad.o2 = 100;
 	ad.keys = 'enabled';
 	ad.map = new Array();
+	ad.displacementX = 0;
+	ad.displacementY = 0;
+	ad.camera = {};
 	
 	Array.prototype.in_array = function(p_val) {
 		for(var i = 0, l = this.length; i < l; i++)	{
@@ -58,8 +61,8 @@ function main() {
 	}
 
 	ad.drawTile = function(tileX, tileY) {
-		var x = tileX * ad.tileWidth;
-		var y = tileY * ad.tileHeight;
+		var x = tileX * ad.tileWidth + ad.displacementX;
+		var y = tileY * ad.tileHeight + ad.displacementY;
 		//Sky and water
 		if (tileY > 5) {
 			ad.context.fillStyle = "#6495ED";
@@ -71,9 +74,9 @@ function main() {
 		}
 
 		//Ground
-		var xandy = (x + 'and' + y);
+		var xandy = (tileX + 'and' + tileY);
 		var ap = ad.hash2prob(ad.coordHash(x, y));
-		if (tileY == 21) {
+		if (tileY == 2) { //212212121212122121212121212121221212
 			var probability = 0.5;
 			if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
 				ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
@@ -101,89 +104,45 @@ function main() {
 		ad.drawBoat((ad.tilesOnX / 2 * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight - 11);
 	}
 	
-	/*
-	function canvas_keypress(event) {
-		if (keys == "enabled") {
+	ad.keypress = function(event) {
+		if (ad.keys == 'enabled') {
 			k = event.keyCode;
-			if(k == 38) {
-				CameraUp();
+			if (k == 38) {
+				ad.camera.up();
 			}
-			if(k == 40) {
-				CameraDown();
+			else if (k == 40) {
+				ad.camera.down();
 			}
-			if(k == 37) {
-				CameraLeft();
+			else if (k == 37) {
+				ad.camera.left();
 			}
-			if(k == 39) {
-				CameraRight();
+			else if (k == 39) {
+				ad.camera.right();
 			}
 		}
-		//Z z   90
-		//<	    37
-		//^	    38
+		//<	   37
+		//^	   38
 		//>    39
 		//v    40
-		//c C   67
-		//u U	85
 	}
-	document.addEventListener('keydown', canvas_keypress, false);
+	
+	document.addEventListener('keydown', ad.keypress, false);
 
-	function Reset() {
-		x1 = 0;
-		y1 = 0;
-		kx = 0;
-		ky = 0;
-	}
-
-	function Zoom1() {
-		TileHeight = (TileHeight - (TileHeight/2));
-		TileWidth = (TileWidth - (TileWidth/2));
-		TileX = (TileX*2);
-		TileY = (TileY*2);
-		drawWorld(0,0,-x1,-y1);
-	}
-
-	function Zoom2() {
-		TileHeight = (TileHeight - - (TileHeight));
-		TileWidth = (TileWidth - - (TileWidth));
-		TileX = (TileX/2);
-		TileY = (TileY/2);
-		drawWorld(kx,ky,-x1,-y1);
-	}
-
-	function collect(TileNumberX, TileNumberY) {
-		var xandy = (TileNumberX+'and'+TileNumberY);
-		var ap = hash2prob(coordHash(TileNumberX, TileNumberY));
-		var probability = 0.01;
-		if ((ap < probability) && (TileNumberY > 30) && (TileNumberY < 50) && (a.in_array(xandy)==false)) {
-			sq++;
-			document.getElementById('quartzdiv').innerHTML= sq;
+	ad.dig = function (tileX, tileY) {
+		var xandy = (tileX + 'and' + tileY);
+		if(!ad.map.in_array(xandy)) {
+			ad.map.push(xandy);
 		}
+		
 	}
-
-	function CameraRight() {
-		lrsw = 'r';
-		document.getElementById("rightbutton").disabled = true;
-		setTimeout(function() {document.getElementById("rightbutton").disabled = false}, 400);	
-		keys = "disabled";
-		setTimeout(function() {keys = "enabled"}, 400);
-		TileX = (TileX + 1);
-		var x2 = (x1 + TileWidth);
-		var anR = setInterval(function() {
-			if ((x1-4) < x2) {
-				drawWorld(kx,ky,-x1,-y1);
-				x1 = x1 + 4;
-			} else {
-				x1 = x1 - 4;
-				clearInterval(anR);
-			}
-		},30); 
-		ax = (TileX - 12);	
-		ay = (TileY - 8);
-		collect(ax,ay);
-		a[a.length] = (ax+'and'+ay);
-		kx = kx+1;
-		div.style.width = parseFloat(div.style.width) - 1+'px';	
+	
+	ad.camera.right = function () {
+		ad.lr = 'r';
+		ad.keys = "disabled";
+		setTimeout(function() {ad.keys = "enabled"}, 400);
+		ad.displacementX++;
+		ad.dig(ad.tilesOnX / 2 + ad.displacementX, 6 + ad.displacementY);
+		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
 
 	function CameraLeft() {
@@ -272,7 +231,7 @@ function main() {
 			drawWorld(kx,ky,-x1,-y1);
 		}, 1000/N);
 	}
-	*/
+	
 	
 	ad.drawWorld(0,0);
 	//ad.drawTools();
