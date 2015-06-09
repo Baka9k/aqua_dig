@@ -1,0 +1,31 @@
+body,td,th {
+	color: #0F6;
+}
+body {
+	background-color: #006;
+	color: #D6D6D6;
+}
+.d {
+	color: #FFC;
+}
+.o2 {
+	width: 160px;
+	height: 30px; 
+	background: #0F6;
+	padding: 0px;
+	float: left;
+}
+.block1 {  
+	background: #444;
+	padding-right: 5px; 
+	padding-left: 5px;
+	border-radius:4px;
+	margin-left:13px;
+	border: solid 1px black; 
+	float: left;
+}
+.button1 {
+	color: #0F6;
+	font-weight: bold;
+	background-color: #333;
+}
