@@ -76,7 +76,7 @@ function main() {
 		//Ground
 		var xandy = (tileX + 'and' + tileY);
 		var ap = ad.hash2prob(ad.coordHash(tileX, tileY));
-		if (tileY == 2) { //212212121212122121212121212121221212
+		if (tileY == 21) {
 			var probability = 0.5;
 			if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
 				ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
@@ -101,7 +101,7 @@ function main() {
 				ad.drawTile(i, j);
 			}
 		}
-		ad.drawBoat((ad.tilesOnX / 2 * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight - 11);
+		ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight - 11);
 		console.log(fromX,fromX + ad.tilesOnX);
 	}
 	
@@ -133,6 +133,7 @@ function main() {
 		var xandy = (tileX + 'and' + tileY);
 		if(!ad.map.in_array(xandy)) {
 			ad.map.push(xandy);
+			console.log(xandy);
 		}
 		
 	}
@@ -142,86 +143,34 @@ function main() {
 		ad.keys = "disabled";
 		setTimeout(function() {ad.keys = "enabled"}, 400);
 		ad.displacementX++;
-		ad.dig(ad.tilesOnX / 2 + ad.displacementX, 6 + ad.displacementY);
+		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
 
-	function CameraLeft() {
-		lrsw = 'l';
-		document.getElementById("leftbutton").disabled = true;
-		setTimeout(function() {document.getElementById("leftbutton").disabled = false}, 400);
-		keys = "disabled";
-		setTimeout(function() {keys = "enabled"}, 400);
-		TileX = (TileX - 1);
-		var x2 = (x1 - TileWidth);
-		var anL = setInterval(function() {
-			if ((x1+4) > x2) {
-				drawWorld(kx,ky,-x1,-y1);
-				x1 = x1 - 4;
-			} else {
-				x1 = x1 + 4;
-				clearInterval(anL);
-			}
-		},30); 
-		ax = (TileX - 12);	
-		ay = (TileY - 8);
-		collect(ax,ay);
-		a[a.length] = (ax+'and'+ay);
-		kx = kx-1; 
-		div.style.width = parseFloat(div.style.width) - 1+'px';
+	ad.camera.left = function () {
+		ad.lr = 'l';
+		ad.keys = "disabled";
+		setTimeout(function() {ad.keys = "enabled"}, 400);
+		ad.displacementX--;
+		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
+		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
 
-	var lnk = 0;
-
-	function CameraUp() {
-		if ((TileY - 8)>6) {
-			document.getElementById("upbutton").disabled = true;
-			setTimeout(function() {document.getElementById("upbutton").disabled = false}, 400);
-			keys = "disabled";
-			setTimeout(function() {keys = "enabled"}, 400);
-			TileY = (TileY - 1);
-			var y2 = (y1 - TileHeight);
-			var anUp = setInterval(function() {
-				if ((y1+4) > y2) {
-					drawWorld(kx,ky,-x1,-y1);
-					y1 = y1 - 4;
-					lnk++;
-				} else {
-					y1 = y1 + 4;
-					clearInterval(anUp);
-				}
-			},30); 
-			ax = (TileX - 12);	
-			ay = (TileY - 8);
-			collect(ax,ay);
-			a[a.length] = (ax+'and'+ay);
-			ky = ky-1;
-			div.style.width = parseFloat(div.style.width) - 1+'px';
-		}
+	ad.camera.down = function () {
+		ad.keys = "disabled";
+		setTimeout(function() {ad.keys = "enabled"}, 400);
+		ad.displacementY++;
+		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
+		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
-
-	function CameraDown() {
-		document.getElementById("downbutton").disabled = true;
-		setTimeout(function() {document.getElementById("downbutton").disabled = false}, 400);
-		keys = "disabled";
-		setTimeout(function() {keys = "enabled"}, 400);
-		TileY = (TileY + 1);
-		var y2 = (y1 + TileHeight);
-		var anD = setInterval(function() {
-			if ((y1-4) < y2) {
-				drawWorld(kx,ky,-x1,-y1);
-				y1 = y1 + 4;
-			} else {
-				y1 = y1 - 4;
-				clearInterval(anD);
-			}
-		},30); 
-		ax = (TileX - 12);	
-		ay = (TileY - 8);
-		collect(ax,ay);
-		a[a.length] = (ax+'and'+ay);
-		ky = ky+1;
-		div.style.width = parseFloat(div.style.width) - 1+'px';
+	
+	ad.camera.up = function () {
+		if (ad.displacementY <= 0) return;
+		ad.keys = "disabled";
+		setTimeout(function() {ad.keys = "enabled"}, 400);
+		ad.displacementY--;
+		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
+		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
 
 	function anim() {
