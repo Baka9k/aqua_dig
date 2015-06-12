@@ -25,6 +25,8 @@ function main() {
 	ad.camera = {};
 	ad.currentFromX = 0;
 	ad.currentFromY = 0;
+	ad.currentDisplacementX = 0;
+	ad.currentDisplacementY = 0;
 	
 	Array.prototype.in_array = function(p_val) {
 		for(var i = 0, l = this.length; i < l; i++)	{
@@ -62,9 +64,9 @@ function main() {
 		return (hash & 0xFFFF)/65536;
 	}
 
-	ad.drawTile = function(tileX, tileY) {
-		var x = (tileX - ad.displacementX)* ad.tileWidth;
-		var y = (tileY - ad.displacementY)* ad.tileHeight;
+	ad.drawTile = function(tileX, tileY, dispX, dispY) {
+		var x = (tileX - ad.currentDisplacementX)* ad.tileWidth + dispX;
+		var y = (tileY - ad.currentDisplacementY)* ad.tileHeight + dispY;
 		//Sky and water
 		if (tileY > 5) {
 			ad.context.fillStyle = "#6495ED";
@@ -95,17 +97,6 @@ function main() {
 		if ((tileY > 51) && (tileY < 100) && (ap < probability) && (ad.map.in_array(xandy)==false)) {
 			ad.draw(emerald, x, y, ad.tileWidth, ad.tileHeight);  
 		}
-	}
-
-	ad.drawWorld = function (fromX, fromY) {
-		for (var i = fromX; i < (fromX + ad.tilesOnX); i++) {
-			for (var j = fromY; j < (fromY + ad.tilesOnY); j++) {
-				ad.drawTile(i, j);
-			}
-		}
-		ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight * 0.725);
-		ad.currentFromX = fromX;
-		ad.currentFromY = fromY;
 	}
 	
 	ad.keypress = function(event) {
@@ -145,7 +136,6 @@ function main() {
 	ad.camera.right = function () {
 		ad.lr = 'r';
 		ad.keys = "disabled";
-		setTimeout(function() {ad.keys = "enabled"}, 400);
 		ad.displacementX++;
 		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
@@ -154,7 +144,6 @@ function main() {
 	ad.camera.left = function () {
 		ad.lr = 'l';
 		ad.keys = "disabled";
-		setTimeout(function() {ad.keys = "enabled"}, 400);
 		ad.displacementX--;
 		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
@@ -162,7 +151,6 @@ function main() {
 
 	ad.camera.down = function () {
 		ad.keys = "disabled";
-		setTimeout(function() {ad.keys = "enabled"}, 400);
 		ad.displacementY++;
 		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
@@ -171,21 +159,38 @@ function main() {
 	ad.camera.up = function () {
 		if (ad.displacementY <= 0) return;
 		ad.keys = "disabled";
-		setTimeout(function() {ad.keys = "enabled"}, 400);
 		ad.displacementY--;
 		ad.dig(Math.round(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
 	}
 
-	function anim() {
-		var N = 60;
-		var incr = -0.5/N;
-		setInterval(function() {
-			incr = -0.5/N;
-			drawWorld(kx,ky,-x1,-y1);
-		}, 1000/N);
+	ad.drawWorld = function (fromX, fromY) {
+		var fps = 10;
+		var stepX = (ad.currentFromX - fromX) * ad.tileWidth / fps;
+		var stepY = (ad.currentFromY - fromY) * ad.tileHeight / fps;
+		var c = 0;
+		var dx = 0;
+		var dy = 0;
+		var si = setInterval(function() {			
+			for (var i = ad.currentFromX; i < (fromX + ad.tilesOnX); i++) {
+				for (var j = ad.currentFromY; j < (fromY + ad.tilesOnY); j++) {
+					ad.drawTile(i, j, dx, dy);
+				}
+			}
+			dx += stepX;
+			dy += stepY;
+			c++;
+			if (c == fps) {
+				clearInterval(si);
+				ad.currentDisplacementX = ad.displacementX;
+				ad.currentDisplacementY = ad.displacementY;
+				ad.keys = "enabled";
+			}
+			ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight * 0.725);
+		}, 250/fps);
+		ad.currentFromX = fromX;
+		ad.currentFromY = fromY;
 	}
-	
 	
 	ad.drawWorld(0,0);
 	//ad.drawTools();
