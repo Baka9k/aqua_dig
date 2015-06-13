@@ -134,13 +134,14 @@ function main() {
 	document.addEventListener('keydown', ad.keypress, false);
 
 	ad.dig = function (tileX, tileY) {
+		var xandy = (tileX + 'and' + tileY);
 		var ap = ad.hash2prob(ad.coordHash(tileX, tileY));
 		var probability = 0.01;
-		if ((tileY > 30) && (tileY < 50) && (ap < probability) && (ad.map.in_array(xandy) == false)) {
+		if ((tileY > 30) && (tileY < 50) && (ap < probability) && (!ad.map.in_array(xandy))) {
 			ad.items.quartz++;
 		}
 		probability = 0.03;
-		if ((tileY > 51) && (tileY < 100) && (ap < probability) && (ad.map.in_array(xandy)==false)) {
+		if ((tileY > 51) && (tileY < 100) && (ap < probability) && (!ad.map.in_array(xandy))) {
 			ad.items.emerald++;
 		}
 		var xandy = (tileX + 'and' + tileY);
