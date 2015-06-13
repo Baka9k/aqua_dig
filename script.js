@@ -155,6 +155,7 @@ function main() {
 		ad.displacementX++;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
+		ad.o2 -= 0.005;
 	}
 
 	ad.camera.left = function () {
@@ -163,6 +164,7 @@ function main() {
 		ad.displacementX--;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
+		ad.o2 -= 0.005;
 	}
 
 	ad.camera.down = function () {
@@ -170,6 +172,7 @@ function main() {
 		ad.displacementY++;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
+		ad.o2 -= 0.005;
 	}
 	
 	ad.camera.up = function () {
@@ -178,6 +181,7 @@ function main() {
 		ad.displacementY--;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
+		ad.o2 -= 0.005;
 	}
 
 	ad.drawWorld = function (fromX, fromY) {
@@ -212,14 +216,25 @@ function main() {
 				ad.currentMap = ad.map.concat(ad.currentMap);
 				ad.keys = "enabled";
 			}
-			ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth, ad.tileHeight * 0.725);
+			ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth + 1, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth - 2, ad.tileHeight * 0.725);
 			ad.drawTools();
+			if (ad.o2 <= 0) {
+				ad.o2 = 0;
+				ad.keys = "disabled";
+				ad.context.font = '56px lucida console';
+				ad.context.fillStyle = "#111111";
+				ad.context.fillText('GAME OVER', ad.width / 2 - 200, ad.height / 2 - 60);
+			}
 		}, t/fps);
 		ad.currentFromX = fromX;
 		ad.currentFromY = fromY;
+		if (ad.displacementY == 0) {
+			ad.o2 = 1;
+		}
 	}
 	
 	ad.drawTools = function() {
+		ad.context.font = '16px lucida console';
 		ad.context.fillStyle = "#DDDDDD";
 		ad.context.fillRect(8, 8, 80, 160);
 		ad.draw(quartz, 36, 12, 20, 20);
