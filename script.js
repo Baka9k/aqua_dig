@@ -181,9 +181,9 @@ function main() {
 	}
 
 	ad.drawWorld = function (fromX, fromY) {
-		var xandy = ((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1) + 'and' + (6 + ad.displacementY)); //d-1
-		var ap = ad.hash2prob(ad.coordHash((Math.ceil(ad.tilesOnX / 2) + ad.displacementX), (6 + ad.displacementY)));
-		if (((!ad.currentMap.in_array(xandy)) && ((fromY + 6) > 21))/* || ((!ad.map.in_array(xandy)) && ((fromY + 6) == 21) && (ap < 0.5))*/) {
+		var xandy = ((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1) + 'and' + (6 + ad.displacementY));
+		var ap = ad.hash2prob(ad.coordHash((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1), (6 + ad.displacementY)));
+		if (((!ad.currentMap.in_array(xandy)) && ((fromY + 6) > 21)) || ((!ad.currentMap.in_array(xandy)) && ((fromY + 6) == 21) && (ap < 0.5))) {
 			var t = 1000;
 			var fps = 40;
 		} else {
