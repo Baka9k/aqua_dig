@@ -204,7 +204,7 @@ function main() {
 			dx += stepX;
 			dy += stepY;
 			c++;
-			if (c == fps) {
+			if (c > fps) {
 				clearInterval(si);
 				ad.currentDisplacementX = ad.displacementX;
 				ad.currentDisplacementY = ad.displacementY;
