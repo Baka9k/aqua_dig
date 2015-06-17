@@ -35,6 +35,10 @@ function main() {
 		diamond: 0
 	};
 	ad.context.font = '16px lucida console';
+	ad.characteristics = {
+		o2consumption: 0.00025,
+		digging: 0
+	};
 	
 	Array.prototype.in_array = function(p_val) {
 		for(var i = 0, l = this.length; i < l; i++)	{
@@ -46,7 +50,7 @@ function main() {
 	}
 
 	ad.draw = function(img, x, y, width, height) {
-		ad.context.drawImage(img, x, y, width, height);
+		ad.context.drawImage(img, Math.round(x), Math.round(y), width, height);
 	}
 
 	ad.drawBoat = function(x, y, width, height) {
@@ -75,34 +79,32 @@ function main() {
 	ad.drawTile = function(tileX, tileY, dispX, dispY) {
 		var x = (tileX - ad.currentDisplacementX)* ad.tileWidth + dispX;
 		var y = (tileY - ad.currentDisplacementY)* ad.tileHeight + dispY;
-		//Sky and water
-		if (tileY > 5) {
-			ad.context.fillStyle = "#6495ED";
-			ad.context.fillRect(x, y, ad.tileWidth, ad.tileHeight);
-		}
-		else {
-			ad.context.fillStyle = "#87CEFA";
-			ad.context.fillRect(x, y, ad.tileWidth, ad.tileHeight);
-		}
-
-		//Ground
 		var xandy = (tileX + 'and' + tileY);
 		var ap = ad.hash2prob(ad.coordHash(tileX, tileY));
+		
+		//Sky
+		if (tileY < 6){
+			ad.context.fillStyle = "#87CEFA";
+			ad.context.fillRect(x, y, ad.tileWidth, ad.tileHeight);
+		} 
+
+		//Ground
 		if (tileY == 21) {
 			var probability = 0.5;
-			if ((ap < probability) && (ad.map.in_array(xandy) == false)) {
+			if ((ap < probability) && (!ad.map.in_array(xandy))) {
 				ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
 			}
 		}
 		if ((tileY > 21) && (ad.map.in_array(xandy) == false)) {
 			ad.draw(stone, x, y, ad.tileWidth, ad.tileHeight);
 		}
-		var probability = 0.01;
-		if ((tileY > 30) && (tileY < 50) && (ap < probability) && (ad.map.in_array(xandy) == false)) {
+		var probability0 = 0.01;
+		if ((tileY > 30) && (ap < probability0) && (ad.map.in_array(xandy) == false)) {
 			ad.draw(quartz, x, y, ad.tileWidth, ad.tileHeight);
 		}
-		probability = 0.03;
-		if ((tileY > 51) && (tileY < 100) && (ap < probability) && (ad.map.in_array(xandy)==false)) {
+		probability0 = 0.01;
+		var probability1 = 0.02;
+		if ((tileY > 71) && (tileY < 170) && (ap > probability0) && (ap < probability1) && (ad.map.in_array(xandy)==false)) {
 			ad.draw(emerald, x, y, ad.tileWidth, ad.tileHeight);  
 		}
 	}
@@ -137,11 +139,11 @@ function main() {
 		var xandy = (tileX + 'and' + tileY);
 		var ap = ad.hash2prob(ad.coordHash(tileX, tileY));
 		var probability = 0.01;
-		if ((tileY > 30) && (tileY < 50) && (ap < probability) && (!ad.map.in_array(xandy))) {
+		if ((tileY > 30) && (tileY < 70) && (ap < probability) && (!ad.map.in_array(xandy))) {
 			ad.items.quartz++;
 		}
-		probability = 0.03;
-		if ((tileY > 51) && (tileY < 100) && (ap < probability) && (!ad.map.in_array(xandy))) {
+		probability = 0.01;
+		if ((tileY > 71) && (tileY < 170) && (ap < probability) && (!ad.map.in_array(xandy))) {
 			ad.items.emerald++;
 		}
 		var xandy = (tileX + 'and' + tileY);
@@ -156,7 +158,6 @@ function main() {
 		ad.displacementX++;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
-		ad.o2 -= 0.005;
 	}
 
 	ad.camera.left = function () {
@@ -165,7 +166,6 @@ function main() {
 		ad.displacementX--;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
-		ad.o2 -= 0.005;
 	}
 
 	ad.camera.down = function () {
@@ -173,7 +173,6 @@ function main() {
 		ad.displacementY++;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
-		ad.o2 -= 0.005;
 	}
 	
 	ad.camera.up = function () {
@@ -182,25 +181,26 @@ function main() {
 		ad.displacementY--;
 		ad.dig(Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1, 6 + ad.displacementY);
 		ad.drawWorld(ad.displacementX, ad.displacementY);
-		ad.o2 -= 0.005;
 	}
 
 	ad.drawWorld = function (fromX, fromY) {
 		var xandy = ((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1) + 'and' + (6 + ad.displacementY));
 		var ap = ad.hash2prob(ad.coordHash((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1), (6 + ad.displacementY)));
 		if (((!ad.currentMap.in_array(xandy)) && ((fromY + 6) > 21)) || ((!ad.currentMap.in_array(xandy)) && ((fromY + 6) == 21) && (ap < 0.5))) {
-			var t = 1000;
+			var t = 1000 - ad.characteristics.digging;
 			var fps = 40;
 		} else {
 			var t = 250;
-			var fps = 10;
+			var fps = 20;
 		}
 		var stepX = (ad.currentFromX - fromX) * ad.tileWidth / fps;
 		var stepY = (ad.currentFromY - fromY) * ad.tileHeight / fps;
 		var c = 0;
 		var dx = 0;
 		var dy = 0;
-		var si = setInterval(function() {			
+		var si = setInterval(function() {
+			ad.context.fillStyle = "#6495ED";
+			ad.context.fillRect(0, 0, ad.width, ad.height); //Background - water
 			for (var i = ad.currentFromX - 1; i <= (fromX + ad.tilesOnX); i++) {
 				for (var j = ad.currentFromY - 1; j <= (fromY + ad.tilesOnY); j++) {
 					ad.drawTile(i, j, dx, dy);
@@ -226,6 +226,7 @@ function main() {
 				ad.context.fillStyle = "#111111";
 				ad.context.fillText('GAME OVER', ad.width / 2 - 200, ad.height / 2 - 60);
 			}
+			ad.o2 -= ad.characteristics.o2consumption;
 		}, t/fps);
 		ad.currentFromX = fromX;
 		ad.currentFromY = fromY;
