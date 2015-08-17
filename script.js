@@ -36,9 +36,10 @@ function main() {
 	};
 	ad.context.font = '16px lucida console';
 	ad.characteristics = {
-		o2consumption: 0.00025,
-		digging: 0
+		o2consumption: 0.00025
 	};
+	ad.dx = 0;
+	ad.dy = 0;
 	
 	Array.prototype.in_array = function(p_val) {
 		for(var i = 0, l = this.length; i < l; i++)	{
@@ -187,51 +188,62 @@ function main() {
 		var xandy = ((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1) + 'and' + (6 + ad.displacementY));
 		var ap = ad.hash2prob(ad.coordHash((Math.ceil(ad.tilesOnX / 2) + ad.displacementX - 1), (6 + ad.displacementY)));
 		if (((!ad.currentMap.in_array(xandy)) && ((fromY + 6) > 21)) || ((!ad.currentMap.in_array(xandy)) && ((fromY + 6) == 21) && (ap < 0.5))) {
-			var t = 1000 - ad.characteristics.digging;
-			var fps = 40;
+			var t = 2;
 		} else {
-			var t = 250;
-			var fps = 20;
+			var t = 0.5;
 		}
-		var stepX = (ad.currentFromX - fromX) * ad.tileWidth / fps;
-		var stepY = (ad.currentFromY - fromY) * ad.tileHeight / fps;
+		
+		//почему зависит от фпс
+		//от и до ломаются
+		
+		var fps = 60;
+		var stepX = (ad.currentFromX - fromX) * ad.tileWidth / (fps * t);
+		var stepY = (ad.currentFromY - fromY) * ad.tileHeight / (fps * t);
+		var nStepsX = (ad.currentFromX - fromX) * ad.tileWidth / stepX;
+		var nStepsY = (ad.currentFromY - fromY) * ad.tileHeight / stepY;
 		var c = 0;
-		var dx = 0;
-		var dy = 0;
 		var si = setInterval(function() {
-			ad.context.fillStyle = "#6495ED";
-			ad.context.fillRect(0, 0, ad.width, ad.height); //Background - water
-			for (var i = ad.currentFromX - 1; i <= (fromX + ad.tilesOnX); i++) {
-				for (var j = ad.currentFromY - 1; j <= (fromY + ad.tilesOnY); j++) {
-					ad.drawTile(i, j, dx, dy);
-				}
-			}
-			dx += stepX;
-			dy += stepY;
+			ad.dx += stepX;
+			ad.dy += stepY;
 			c++;
-			if (c > fps) {
+			if ((c > nStepsX) || (c > nStepsY)) {
 				clearInterval(si);
+				ad.dx = 0;
+				ad.dy = 0;
 				ad.currentDisplacementX = ad.displacementX;
 				ad.currentDisplacementY = ad.displacementY;
 				ad.currentMap = [];
 				ad.currentMap = ad.map.concat(ad.currentMap);
 				ad.keys = "enabled";
 			}
-			ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth + 1, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth - 2, ad.tileHeight * 0.725);
-			ad.drawTools();
-			if (ad.o2 <= 0) {
+		}, t*1000/(nStepsX + nStepsY));
+		if (ad.o2 <= 0) {
 				ad.o2 = 0;
 				ad.keys = "disabled";
 				ad.context.font = '56px lucida console';
 				ad.context.fillStyle = "#111111";
 				ad.context.fillText('GAME OVER', ad.width / 2 - 200, ad.height / 2 - 60);
-			}
-			ad.o2 -= ad.characteristics.o2consumption;
-		}, t/fps);
+		}
 		ad.currentFromX = fromX;
 		ad.currentFromY = fromY;
 		if (ad.displacementY == 0) {
 			ad.o2 = 1;
+		}
+		
+		if (!ad.mainLoop) {
+			ad.mainLoop = true;
+			var mainLoop = setInterval(function() {
+				ad.context.fillStyle = "#6495ED";
+				ad.context.fillRect(0, 0, ad.width, ad.height); //Background - water
+				for (var i = ad.currentFromX - 1; i <= (fromX + ad.tilesOnX); i++) {
+					for (var j = ad.currentFromY - 1; j <= (fromY + ad.tilesOnY); j++) {
+						ad.drawTile(i, j, ad.dx, ad.dy);
+					}
+				}
+				ad.drawBoat((Math.ceil(ad.tilesOnX / 2) * ad.tileWidth) - ad.tileWidth + 1, 6 * (ad.tileHeight) + ad.tileHeight * 0.2, ad.tileWidth - 2, ad.tileHeight * 0.725);
+				ad.drawTools();
+				ad.o2 -= ad.characteristics.o2consumption;
+			}, 1000/fps);
 		}
 	}
 	
