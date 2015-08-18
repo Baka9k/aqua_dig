@@ -147,7 +147,6 @@ function main() {
 		if ((tileY > 71) && (tileY < 170) && (ap < probability) && (!ad.map.in_array(xandy))) {
 			ad.items.emerald++;
 		}
-		var xandy = (tileX + 'and' + tileY);
 		if(!ad.map.in_array(xandy)) {
 			ad.map.push(xandy);
 		}
@@ -192,10 +191,6 @@ function main() {
 		} else {
 			var t = 0.5;
 		}
-		
-		//почему зависит от фпс
-		//от и до ломаются
-		
 		var fps = 60;
 		var stepX = (ad.currentFromX - fromX) * ad.tileWidth / (fps * t);
 		var stepY = (ad.currentFromY - fromY) * ad.tileHeight / (fps * t);
@@ -235,8 +230,8 @@ function main() {
 			var mainLoop = setInterval(function() {
 				ad.context.fillStyle = "#6495ED";
 				ad.context.fillRect(0, 0, ad.width, ad.height); //Background - water
-				for (var i = ad.currentFromX - 1; i <= (fromX + ad.tilesOnX); i++) {
-					for (var j = ad.currentFromY - 1; j <= (fromY + ad.tilesOnY); j++) {
+				for (var i = ad.currentFromX - 1; i <= (ad.currentFromX + ad.tilesOnX); i++) {
+					for (var j = ad.currentFromY - 1; j <= (ad.currentFromY + ad.tilesOnY); j++) {
 						ad.drawTile(i, j, ad.dx, ad.dy);
 					}
 				}
