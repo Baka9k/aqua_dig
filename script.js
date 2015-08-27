@@ -36,7 +36,7 @@ function main() {
 	};
 	ad.context.font = '16px lucida console';
 	ad.characteristics = {
-		o2consumption: 0.00025
+		o2consumption: 0.00010
 	};
 	ad.dx = 0;
 	ad.dy = 0;
@@ -196,7 +196,6 @@ function main() {
 		var nStepsX = (ad.currentFromX - fromX) * ad.tileWidth / stepX;
 		var nStepsY = (ad.currentFromY - fromY) * ad.tileHeight / stepY;
 		var c = 0;
-		console.log(stepY);
 		
 		var step = function() {
 			ad.raf = window.requestAnimationFrame(step);
